@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "veman"
+description = "Virtual environment manager"
+requires-python = ">=3.10"
+dynamic = ["version", "readme"]
+authors = [{name = "Mikael Tranbom"}]
+license = {text = "BSD 3-Clause"}
+
+[tool.setuptools]
+packages = ["veman"]
+
+[tool.setuptools.dynamic]
+version = {attr = "veman.__version__"}
+readme = {file = ["README.md"]}
