@@ -4,11 +4,34 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "veman"
-description = "Virtual environment manager"
-requires-python = ">=3.10"
+authors = [{name = "Mikael Tranbom"}, {email = "mikael@tranbom.io"}]
+description = "Virtual environment manager for venv"
+requires-python = ">=3.9"
+license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Utilities"
+]
+keywords = [
+    "venv", "virtual environment", "utility",
+    "developer tools", "virtual environment manager"
+]
+
 dynamic = ["version", "readme"]
-authors = [{name = "Mikael Tranbom"}]
-license = {text = "BSD 3-Clause"}
+
+[project.scripts]
+veman = "veman:main.main"
+
+[project.urls]
+homepage = "https://gitlab.com/tranbom/veman"
+repository = "https://gitlab.com/tranbom/veman"
+documentation = "https://gitlab.com/tranbom/veman"
 
 [tool.setuptools]
 packages = ["veman"]

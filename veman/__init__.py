@@ -1,4 +1,4 @@
 """
 Init
 """
-from veman import _version
+from veman._version import __version__
