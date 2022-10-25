@@ -1,9 +1,9 @@
 # veman
 
-veman is a lightweight virtual environment manager for python meant 
-to simplify working with venv.
+veman is a lightweight virtual environment manager using venv.
+With veman it is easier to manage multiple environments.
 
-Note: veman currently only supports Linux & bash
+Note: veman is under active development and currently only supports Linux & bash
 
 ## Installation
 
@@ -25,25 +25,28 @@ Install via pip:
 Example:
 `veman create djangoenv`
 
+
 ### Activate a virtual environment
 
+`veman activate` or
 `veman activate <environment-name>`
 
 Example:
 `veman activate djangoenv`
-
-It is also possible to activate by choosing venv from a list:
-`veman activate`
 
 
 ### Deactivate a virtual environment
 
 `deactivate` (inside an active venv)
 
+
 ### List created virtual environments
 
 `veman list`
 
+
 ### Delete a virtual environment
 
-`veman delete` or veman delete <environment-name>
+`veman delete` or `veman delete <environment-name>`
+
+Example: `veman delete djangoenv`
