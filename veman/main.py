@@ -156,7 +156,7 @@ def check_context(context: types.SimpleNamespace) -> bool:
     if not os.path.isdir(ENV_DIR):
         os.makedirs(ENV_DIR)
 
-    if context.os != 'linux':
+    if context.os not in ('darwin', 'linux'):
         print(f"Support for {systems[context.os]} not yet implemented")
         return False
 
@@ -337,4 +337,3 @@ def main():
             print(env)
     else:
         print("Invalid command")
-    
