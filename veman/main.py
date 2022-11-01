@@ -130,16 +130,13 @@ class Veman:
             rmtree(venv_path)
 
 
-def activate_venv(env: Veman):
+def activate_venv(env: Veman, context: types.SimpleNamespace):
     """
     Activate virtual environment
     """
-    try:
-        virtual_env = os.environ['VIRTUAL_ENV']
-        print(f"Deactivate current venv {virtual_env} before activating a new")
+    if context.virtual_env:
+        print(f"Deactivate {context.virtual_env} before activating another environment")
         sys.exit(1)
-    except KeyError:
-        pass
 
     env.activate()
 
@@ -177,6 +174,12 @@ def get_context() -> types.SimpleNamespace:
     context = types.SimpleNamespace()
     context.os = sys.platform
     context.shell = os.environ['SHELL']
+    context.virtual_env = None
+
+    try:
+        context.virtual_env = os.environ['VIRTUAL_ENV']
+    except KeyError:
+        pass
 
     return context
 
@@ -307,7 +310,8 @@ def main():
         env = Veman(name=venv_name)
 
     if options.command == 'activate':
-        activate_venv(env)
+        activate_venv(env, context)
+
     elif options.command == 'create':
         env.create(overwrite=options.overwrite)
     elif options.command == 'delete':
