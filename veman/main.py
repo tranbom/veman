@@ -167,6 +167,17 @@ def check_context(context: types.SimpleNamespace) -> bool:
     return True
 
 
+def create_venv(env: Veman, context: types.SimpleNamespace, overwrite: bool):
+    """
+    Create virtual environment
+    """
+    if context.virtual_env:
+        print(f"Deactivate {context.virtual_env} before creating a new environment")
+        sys.exit(1)
+
+    env.create(overwrite=overwrite)
+
+
 def get_context() -> types.SimpleNamespace:
     """
     Return context
@@ -313,7 +324,8 @@ def main():
         activate_venv(env, context)
 
     elif options.command == 'create':
-        env.create(overwrite=options.overwrite)
+        create_venv(env, context, options.overwrite)
+
     elif options.command == 'delete':
         if env.name:
             env.delete()
