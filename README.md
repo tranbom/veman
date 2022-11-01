@@ -3,7 +3,9 @@
 veman is a lightweight virtual environment manager using venv.
 With veman it is easier to manage multiple environments.
 
-Note: veman is under active development and currently only supports Linux & bash
+Note: veman is under active development and currently supports Bash in Linux & macOS.
+
+Note for macOS: veman currently only sources ~/.bashrc when activating a venv.
 
 ## Installation
 
