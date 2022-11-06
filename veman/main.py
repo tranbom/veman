@@ -17,15 +17,17 @@ ENV_DIR = str(Path.home().joinpath('.veman', 'env')) + '/'
 class Veman:
     """Virtual environment manager"""
     name: str
+    context: types.SimpleNamespace
     operating_system: str
     python_version: str
     environment: venv.EnvBuilder
     base_path: str
     overwrite: bool
 
-    def __init__(self, name):
+    def __init__(self, name: str, context: types.SimpleNamespace):
         self.name = name
-        self.base_path = ENV_DIR
+        self.context = context
+        self.base_path = context.env_dir
         # These are the default values when running python -m venv, ok to use for now
         self.environment = venv.EnvBuilder(
             clear=False,
@@ -113,7 +115,7 @@ class Veman:
         """
         Return True if venv exists
         """
-        return self.name in get_environments()
+        return self.name in get_environments(self.context)
 
     def delete(self):
         """
@@ -153,8 +155,8 @@ def check_context(context: types.SimpleNamespace) -> bool:
         'win32': 'Windows',
     }
 
-    if not os.path.isdir(ENV_DIR):
-        os.makedirs(ENV_DIR)
+    if not os.path.isdir(context.env_dir):
+        os.makedirs(context.env_dir)
 
     if context.os not in ('darwin', 'linux'):
         print(f"Support for {systems[context.os]} not yet implemented")
@@ -186,6 +188,7 @@ def get_context() -> types.SimpleNamespace:
     context.os = sys.platform
     context.shell = os.environ['SHELL']
     context.virtual_env = None
+    context.env_dir = ENV_DIR
 
     try:
         context.virtual_env = os.environ['VIRTUAL_ENV']
@@ -195,15 +198,15 @@ def get_context() -> types.SimpleNamespace:
     return context
 
 
-def get_environments() -> List:
+def get_environments(context: types.SimpleNamespace) -> List:
     """
-    Get a list of created environments in ENV_DIR
+    Get a list of created environments in context.env_dir
     """
-    env_dir_contents = os.listdir(ENV_DIR)
+    env_dir_contents = os.listdir(context.env_dir)
     environments = []
 
     for entry in env_dir_contents:
-        if is_managed_venv(ENV_DIR + entry):
+        if is_managed_venv(context.env_dir + entry):
             environments.append(entry)
 
     if environments:
@@ -212,13 +215,13 @@ def get_environments() -> List:
     return environments
 
 
-def get_venv_name_from_user(command: str) -> str:
+def get_venv_name_from_user(command: str, context: types.SimpleNamespace) -> str:
     """
     List available venvs and prompt user to choose venv (or quit)
     """
     print(f"-> Select venv to {command}")
 
-    environments = get_environments()
+    environments = get_environments(context)
     for n_env, env in enumerate(environments, start=1):
         print(f' {n_env}) {env}')
 
@@ -317,8 +320,13 @@ def main():
         venv_name = options.venv_name or input("Enter name for the new venv: ")
 
     if options.command in ('activate', 'create', 'delete'):
-        venv_name = venv_name or options.venv_name or get_venv_name_from_user(options.command)
-        env = Veman(name=venv_name)
+        venv_name = (
+            venv_name
+            or options.venv_name
+            or get_venv_name_from_user(options.command, context)
+        )
+
+        env = Veman(name=venv_name, context=context)
 
     if options.command == 'activate':
         activate_venv(env, context)
@@ -332,7 +340,7 @@ def main():
         else:
             print("No venv_name supplied")
     elif options.command == 'list':
-        environments = get_environments()
+        environments = get_environments(context)
         for env in environments:
             print(env)
     else:
