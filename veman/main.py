@@ -11,6 +11,8 @@ from pathlib import Path
 from shutil import rmtree
 from typing import List
 
+from veman import __version__
+
 ENV_DIR = str(Path.home().joinpath('.veman', 'env')) + '/'
 
 
@@ -313,6 +315,12 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Virtual Environment Manager')
+    parser.add_argument(
+        '--version',
+        action='store_true',
+        dest='version',
+        help='print veman version'
+    )
     subparsers = parser.add_subparsers(dest='command')
 
     parser_create = subparsers.add_parser('create', help='create a new venv')
@@ -340,6 +348,10 @@ def main():
     parser_list = subparsers.add_parser('list', help='list virtual environments')
 
     options = parser.parse_args()
+
+    if options.version:
+        print(f"veman {__version__}")
+        sys.exit(0)
 
     if not options.command:
         # print_usage is more compact and helpful than printing full help
