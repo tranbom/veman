@@ -273,6 +273,43 @@ def is_venv(directory: str) -> bool:
     return directory_is_venv
 
 
+def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace):
+    """
+    Parse command given as argument to veman and execute appropriate functions
+    """
+    venv_name = ''
+
+    if options.command == 'create':
+        venv_name = options.venv_name or input("Enter name for the new venv: ")
+
+    if options.command in ('activate', 'create', 'delete'):
+        venv_name = (
+            venv_name
+            or options.venv_name
+            or get_venv_name_from_user(options.command, context)
+        )
+
+        env = Veman(name=venv_name, context=context)
+
+    if options.command == 'activate':
+        activate_venv(env, context)
+
+    elif options.command == 'create':
+        create_venv(env, context, options.overwrite)
+
+    elif options.command == 'delete':
+        if env.name:
+            env.delete()
+        else:
+            print("No venv_name supplied")
+    elif options.command == 'list':
+        environments = get_environments(context)
+        for env in environments:
+            print(env)
+    else:
+        print("Invalid command")
+
+
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Virtual Environment Manager')
@@ -314,34 +351,4 @@ def main():
     if not check_context(context):
         sys.exit(1)
 
-    venv_name = ''
-
-    if options.command == 'create':
-        venv_name = options.venv_name or input("Enter name for the new venv: ")
-
-    if options.command in ('activate', 'create', 'delete'):
-        venv_name = (
-            venv_name
-            or options.venv_name
-            or get_venv_name_from_user(options.command, context)
-        )
-
-        env = Veman(name=venv_name, context=context)
-
-    if options.command == 'activate':
-        activate_venv(env, context)
-
-    elif options.command == 'create':
-        create_venv(env, context, options.overwrite)
-
-    elif options.command == 'delete':
-        if env.name:
-            env.delete()
-        else:
-            print("No venv_name supplied")
-    elif options.command == 'list':
-        environments = get_environments(context)
-        for env in environments:
-            print(env)
-    else:
-        print("Invalid command")
+    parse_command(context, options)
