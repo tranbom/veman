@@ -284,7 +284,10 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     if options.command == 'create':
         venv_name = options.venv_name or input("Enter name for the new venv: ")
 
-    if options.command in ('activate', 'create', 'delete'):
+    if options.command == 'temp':
+        venv_name = 'veman-temp0'
+
+    if options.command in ('activate', 'create', 'delete', 'temp'):
         venv_name = (
             venv_name
             or options.venv_name
@@ -308,6 +311,10 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         environments = get_environments(context)
         for env in environments:
             print(env)
+    elif options.command == 'temp':
+        create_venv(env, context, True)
+        activate_venv(env, context)
+        env.delete()
     else:
         print("Invalid command")
 
@@ -346,6 +353,12 @@ def main():
 
     # pylint: disable=unused-variable
     parser_list = subparsers.add_parser('list', help='list virtual environments')
+
+    # pylint: disable=unused-variable
+    parser_temp = subparsers.add_parser(
+        'temp',
+        help='create temporary environment (deleted on deactivation)'
+    )
 
     options = parser.parse_args()
 
