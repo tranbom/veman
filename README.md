@@ -52,3 +52,13 @@ Example:
 `veman delete` or `veman delete <environment-name>`
 
 Example: `veman delete djangoenv`
+
+
+### Create and activate a temporary environment
+
+Create a temporary environment which will be deleted immediately when
+deactivating the environment.
+
+`veman temp`
+
+To exit & delete the temporary environment type `deactivate`
