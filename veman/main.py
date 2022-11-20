@@ -46,8 +46,9 @@ class Veman:
         """
         Activate an existing venv
         """
-        if is_managed_venv(self.base_path + self.name):
-            # is_managed_venv contains a check to verify the existence of veman_activate
+        if self.exists:
+            # is_managed_venv (called as part of self.exists) contains
+            # a check to verify the existence of veman_activate
             veman_activate = self.base_path + self.name + '/bin/veman_activate'
 
             subprocess.run(['bash', '--rcfile', veman_activate], check=True)
@@ -142,7 +143,10 @@ def activate_venv(env: Veman, context: types.SimpleNamespace):
         print(f"Deactivate {context.virtual_env} before activating another environment")
         sys.exit(1)
 
-    env.activate()
+    try:
+        env.activate()
+    except ValueError as error:
+        print(error)
 
 
 def check_context(context: types.SimpleNamespace) -> bool:
