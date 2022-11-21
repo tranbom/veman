@@ -62,3 +62,7 @@ deactivating the environment.
 `veman temp`
 
 To exit & delete the temporary environment type `deactivate`
+
+## License
+
+GPL-3.0-only
