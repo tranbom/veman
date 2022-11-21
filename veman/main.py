@@ -104,17 +104,23 @@ class Veman:
         home_rc = str(Path.home()) + '/.bashrc'
         venv_activate = self.base_path + self.name + '/bin/activate'
         veman_activate = self.base_path + self.name + '/bin/veman_activate'
+        veman_history = self.base_path + self.name + '/.veman_history'
 
-        line1 = '#!/bin/bash'
-        line2 = ''
-        line3 = f'source {home_rc}'
-        line4 = f'source {venv_activate}'
-        line5 = 'alias deactivate="deactivate && exit"'
+        lines = []
+
+        lines.append('#!/bin/bash')
+        lines.append('')
+        lines.append(f'source {home_rc}')
+        lines.append(f'source {venv_activate}')
+        lines.append('alias deactivate="deactivate && exit"')
+        lines.append('')
+        lines.append(f'export HISTFILE={veman_history}')
 
         try:
             with open(veman_activate, 'w', encoding='UTF-8') as file:
-                file.write(f'{line1}\n{line2}\n{line3}\n{line4}\n\n{line5}\n')
-        except FileNotFoundError:
+                for line in lines:
+                    file.write(f'{line}\n')
+        except IOError:
             print('Error writing veman_activate script to venv')
 
     def on_deactivate(self):
