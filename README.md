@@ -63,6 +63,19 @@ deactivating the environment.
 
 To exit & delete the temporary environment type `deactivate`
 
+### Bash history
+
+veman creates a separate bash history file for each venv.
+
+The history of bash commands executed inside an activated venv is saved
+in the root folder of the venv as **.veman_history** and everytime
+a virtual environment is activated the bash history will be restored.
+
+The bash builtin `history` will print the environments history when a venv is activated and
+when the virtual environment is deactivated `history` will automatically switch back to using
+the regular bash history file (usually ~/.bash_history).
+
+
 ## License
 
 GPL-3.0-only
