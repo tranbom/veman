@@ -39,3 +39,7 @@ packages = ["veman"]
 
 [tool.setuptools.dynamic]
 version = {attr = "veman.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["veman"]
+exclude = ["veman.tests*", "tests*"]
