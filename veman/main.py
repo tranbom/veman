@@ -241,6 +241,17 @@ def get_environments(context: types.SimpleNamespace) -> List:
     return environments
 
 
+def get_temp_venv_name(context: types.SimpleNamespace) -> str:
+    """Get name to use for temporary venv"""
+    # 5000 should be plenty
+    for num in range(0,5000):
+        venv_name = f'veman-temp{str(num)}'
+        if venv_name not in get_environments(context):
+            break
+
+    return venv_name
+
+
 def get_venv_name_from_user(command: str, context: types.SimpleNamespace) -> str:
     """
     List available venvs and prompt user to choose venv (or quit)
@@ -309,7 +320,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         venv_name = options.venv_name or input("Enter name for the new venv: ")
 
     if options.command == 'temp':
-        venv_name = 'veman-temp0'
+        venv_name = get_temp_venv_name(context)
 
     if options.command in ('activate', 'create', 'delete', 'temp'):
         venv_name = (
