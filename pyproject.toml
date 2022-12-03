@@ -34,12 +34,12 @@ veman = "veman:main.main"
 "Homepage" = "https://gitlab.com/tranbom/veman"
 "Repository" = "https://gitlab.com/tranbom/veman"
 
-[tool.setuptools]
-packages = ["veman"]
-
 [tool.setuptools.dynamic]
 version = {attr = "veman.__version__"}
 
 [tool.setuptools.packages.find]
 include = ["veman"]
 exclude = ["veman.tests*", "tests*"]
+
+[tool.pylint.main]
+max-branches = 18
