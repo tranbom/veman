@@ -23,7 +23,7 @@ import types
 import venv
 from pathlib import Path
 from shutil import rmtree
-from typing import List
+from typing import Optional, List
 
 from veman import __version__
 
@@ -95,6 +95,29 @@ class Veman:
 
         self.install_scripts()
         self.post_create()
+
+    def shell_history(self) -> List[str]:
+        """
+        Read shell history from .veman_history for venv and return a list
+        with complete history
+        """
+        veman_history = self.base_path + self.name + '/.veman_history'
+
+        try:
+            with open(veman_history, 'r', encoding='UTF-8') as file:
+                lines = file.readlines()
+        except FileNotFoundError:
+            return []
+        except IOError:
+            print(f"Error reading {veman_history}")
+
+        history = []
+
+        for line in lines:
+            line = line.replace('\n', '')
+            history.append(line)
+
+        return history
 
     def install_scripts(self):
         """
@@ -273,6 +296,41 @@ def get_venv_name_from_user(command: str, context: types.SimpleNamespace) -> str
     return venv_name
 
 
+def venv_shell_history(
+    context: types.SimpleNamespace,
+    venv_name: Optional[str] = None
+) -> List[str]:
+    """
+    Read and return shell history for environment with name `venv_name` or
+    combined history for all environments if `venv_name` is empty.
+    """
+    history = []
+
+    if venv_name:
+        env = Veman(name=venv_name, context=context)
+        history = env.shell_history()
+    else:
+        for environment in get_environments(context):
+            env = Veman(name=environment, context=context)
+            history.extend(env.shell_history())
+
+    return history
+
+
+def print_venv_shell_history(
+    context: types.SimpleNamespace,
+    venv_name: Optional[str] = None
+):
+    """
+    Print shell history for environment with name `venv_name` or combined
+    history for all environments if `venv_name` is empty.
+    """
+    history = venv_shell_history(context, venv_name)
+
+    for entry in history:
+        print(entry)
+
+
 def is_managed_venv(directory: str) -> bool:
     """
     Check if given `directory` is a virtual environment managed by veman
@@ -316,8 +374,8 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     """
     venv_name = ''
 
-    if options.command == 'create':
-        venv_name = options.venv_name or input("Enter name for the new venv: ")
+    if options.command == 'create' or (options.command == 'history' and not options.all_history):
+        venv_name = options.venv_name or input("Enter name for the venv: ")
 
     if options.command == 'temp':
         venv_name = get_temp_venv_name(context)
@@ -342,14 +400,20 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
             env.delete()
         else:
             print("No venv_name supplied")
+
+    elif options.command == 'history':
+        print_venv_shell_history(context, venv_name)
+
     elif options.command == 'list':
         environments = get_environments(context)
         for env in environments:
             print(env)
+
     elif options.command == 'temp':
         create_venv(env, context, True)
         activate_venv(env, context)
         env.delete()
+
     else:
         print("Invalid command")
 
@@ -385,6 +449,19 @@ def main():
 
     parser_delete = subparsers.add_parser('delete', help='delete an existing venv')
     parser_delete.add_argument('venv_name', type=str, nargs='?', help='venv name')
+
+    parser_history = subparsers.add_parser(
+        'history',
+        help='print shell history for venv'
+    )
+    parser_history.add_argument('venv_name', type=str, nargs='?', help='venv_name')
+    parser_history.add_argument(
+        '-a',
+        '--all',
+        action='store_true',
+        dest='all_history',
+        help='print shell history for all virtual environments'
+    )
 
     # pylint: disable=unused-variable
     parser_list = subparsers.add_parser('list', help='list virtual environments')
