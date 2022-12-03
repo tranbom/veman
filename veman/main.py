@@ -144,7 +144,7 @@ class Veman:
                 for line in lines:
                     file.write(f'{line}\n')
         except IOError:
-            print('Error writing veman_activate script to venv')
+            print("Error writing veman_activate script to venv")
 
     def on_deactivate(self):
         """
@@ -267,7 +267,7 @@ def get_environments(context: types.SimpleNamespace) -> List:
 def get_temp_venv_name(context: types.SimpleNamespace) -> str:
     """Get name to use for temporary venv"""
     # 5000 should be plenty
-    for num in range(0,5000):
+    for num in range(0, 5000):
         venv_name = f'veman-temp{str(num)}'
         if venv_name not in get_environments(context):
             break
@@ -285,7 +285,7 @@ def get_venv_name_from_user(command: str, context: types.SimpleNamespace) -> str
     for n_env, env in enumerate(environments, start=1):
         print(f' {n_env}) {env}')
 
-    choice = -1
+    choice = '-1'
     while not 1 <= int(choice) <= len(environments):
         choice = input(f'(1-{len(environments)} or q): ')
 
@@ -374,7 +374,9 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     """
     venv_name = ''
 
-    if options.command == 'create' or (options.command == 'history' and not options.all_history):
+    if options.command == 'create' or (
+        options.command == 'history' and not options.all_history
+    ):
         venv_name = options.venv_name or input("Enter name for the venv: ")
 
     if options.command == 'temp':
@@ -464,10 +466,13 @@ def main():
     )
 
     # pylint: disable=unused-variable
-    parser_list = subparsers.add_parser('list', help='list virtual environments')
+    parser_list = subparsers.add_parser(  # noqa: F841
+        'list',
+        help='list virtual environments'
+    )
 
     # pylint: disable=unused-variable
-    parser_temp = subparsers.add_parser(
+    parser_temp = subparsers.add_parser(  # noqa: F841
         'temp',
         help='create temporary environment (deleted on deactivation)'
     )
