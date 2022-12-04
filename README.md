@@ -5,6 +5,27 @@ With veman it is easier to manage multiple environments.
 
 Note: veman is under active development and currently supports Bash in Linux & macOS.
 
+## Roadmap
+
+veman aims to be a simple manager for Python's venv package. The intention of veman is
+to be a comprehensive companion tool for venv, facilitating the creation/activation &
+management of virtual environments, with some extra features that aids development with
+Python.
+
+veman is primarily developed for Linux & macOS. veman does not yet support
+Windows. Windows compatibility will most likely be implemented in a future version but it is
+currently not a prioritised feature.
+
+### Planned features
+
+- Connect a managed venv with a specific git repository (e.g., automatic cd on activate)
+- User defined commands to run on activate (python and/or shell)
+- Compatibility with zsh & more shells
+- Command to add local paths to .pth-file in venv
+- Configuration file with settings for veman (e.g., path to env directory)
+- Adopt existing unmanaged venvs
+- Auto-update managed venvs after veman has been upgraded
+
 ## Installation
 
 Install via pip:
