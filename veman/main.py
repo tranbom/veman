@@ -124,7 +124,14 @@ class Veman:
         Install scripts into a created environment
         """
         # Generating the veman_activate script inline is fine for now
-        home_rc = str(Path.home()) + '/.bashrc'
+        etc_profile = ''
+
+        if self.context.os == 'darwin':
+            etc_profile = '/etc/profile'
+            home_rc = str(Path.home()) + '/.bash_profile'
+        else:
+            home_rc = str(Path.home()) + '/.bashrc'
+
         venv_activate = self.base_path + self.name + '/bin/activate'
         veman_activate = self.base_path + self.name + '/bin/veman_activate'
         veman_history = self.base_path + self.name + '/.veman_history'
@@ -133,11 +140,18 @@ class Veman:
 
         lines.append('#!/bin/bash')
         lines.append('')
-        lines.append(f'source {home_rc}')
+        if self.context.os == 'darwin':
+            lines.append('export SHELL_SESSION_HISTORY=0')
+            lines.append(f'export HISTFILE={veman_history}')
+            lines.append(f'source {etc_profile}')
+            lines.append('')
+        lines.append(f'[ -r {home_rc} ] && source {home_rc}')
         lines.append(f'source {venv_activate}')
         lines.append('alias deactivate="deactivate && exit"')
         lines.append('')
-        lines.append(f'export HISTFILE={veman_history}')
+        if self.context.os == 'linux':
+            lines.append(f'export HISTFILE={veman_history}')
+            lines.append('')
 
         try:
             with open(veman_activate, 'w', encoding='UTF-8') as file:

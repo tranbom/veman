@@ -5,8 +5,6 @@ With veman it is easier to manage multiple environments.
 
 Note: veman is under active development and currently supports Bash in Linux & macOS.
 
-Note for macOS: veman currently only sources ~/.bashrc when activating a venv.
-
 ## Installation
 
 Install via pip:
@@ -75,6 +73,12 @@ The bash builtin `history` will print the environments history when a venv is ac
 when the virtual environment is deactivated `history` will automatically switch back to using
 the regular bash history file (usually ~/.bash_history).
 
+## Notes
+
+veman sources `~/.bashrc` in Linux. veman is mainly tested in distributions that are
+derivatives of Debian which automatically sources `/etc/bash.bashrc`.
+
+veman sources `/etc/profile` and `~/.bash_profile` in macOS.
 
 ## License
 
