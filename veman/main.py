@@ -242,6 +242,9 @@ def create_venv(env: Veman, context: types.SimpleNamespace, overwrite: bool):
 
     env.create(overwrite=overwrite)
 
+    if env.exists:
+        activate_venv(env, context)
+
 
 def get_context() -> types.SimpleNamespace:
     """
