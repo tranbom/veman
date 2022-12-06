@@ -232,7 +232,12 @@ def check_context(context: types.SimpleNamespace) -> bool:
     return True
 
 
-def create_venv(env: Veman, context: types.SimpleNamespace, overwrite: bool):
+def create_venv(
+    env: Veman,
+    context: types.SimpleNamespace,
+    overwrite: bool,
+    activate: bool
+):
     """
     Create virtual environment
     """
@@ -242,7 +247,7 @@ def create_venv(env: Veman, context: types.SimpleNamespace, overwrite: bool):
 
     env.create(overwrite=overwrite)
 
-    if env.exists:
+    if activate and env.exists:
         activate_venv(env, context)
 
 
@@ -412,7 +417,12 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         activate_venv(env, context)
 
     elif options.command == 'create':
-        create_venv(env, context, options.overwrite)
+        create_venv(
+            env,
+            context,
+            options.overwrite,
+            options.activate
+        )
 
     elif options.command == 'delete':
         if env.name:
@@ -429,8 +439,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
             print(env)
 
     elif options.command == 'temp':
-        create_venv(env, context, True)
-        activate_venv(env, context)
+        create_venv(env, context, True, True)
         env.delete()
 
     else:
@@ -454,6 +463,14 @@ def main():
         type=str,
         nargs='?',
         help='venv name'
+    )
+    parser_create.add_argument(
+        '--activate',
+        '-a',
+        action='store_true',
+        default=False,
+        dest='activate',
+        help='Activate venv after creation'
     )
     parser_create.add_argument(
         '--overwrite',
