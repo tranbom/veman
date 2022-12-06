@@ -5,8 +5,6 @@ With veman it is easier to manage multiple environments.
 
 Note: veman is under active development and currently supports Bash in Linux & macOS.
 
-## Roadmap
-
 veman aims to be a simple manager for Python's venv package. The intention of veman is
 to be a comprehensive companion tool for venv, facilitating the creation/activation &
 management of virtual environments, with some extra features that aids development with
@@ -16,15 +14,6 @@ veman is primarily developed for Linux & macOS. veman does not yet support
 Windows. Windows compatibility will most likely be implemented in a future version but it is
 currently not a prioritised feature.
 
-### Planned features
-
-- Connect a managed venv with a specific git repository (e.g., automatic cd on activate)
-- User defined commands to run on activate (python and/or shell)
-- Compatibility with zsh & more shells
-- Command to add local paths to .pth-file in venv
-- Configuration file with settings for veman (e.g., path to env directory)
-- Adopt existing unmanaged venvs
-- Auto-update managed venvs after veman has been upgraded
 
 ## Installation
 
@@ -43,8 +32,13 @@ Install via pip:
 `veman create` or
 `veman create <environment-name>`
 
-Example:
-`veman create djangoenv`
+Use `-a` or `--activate` after the create command to automatically activate
+the venv after creation.
+
+Examples:  
+`veman create djangoenv`  
+`veman create -a flaskenv`  
+`veman create --activate testenv1`  
 
 
 ### Activate a virtual environment
@@ -82,6 +76,9 @@ deactivating the environment.
 
 To exit & delete the temporary environment type `deactivate`
 
+veman supports creating multiple temporary environments simultaneously.
+
+
 ### Bash history
 
 veman creates a separate bash history file for each venv.
@@ -94,12 +91,34 @@ The bash builtin `history` will print the environments history when a venv is ac
 when the virtual environment is deactivated `history` will automatically switch back to using
 the regular bash history file (usually ~/.bash_history).
 
+veman also has its own `history` command which can be used without having to activate
+a venv, making it easy to find which commands have been run in different environments.
+
+`veman history <environment-name>` will list the bash history for a single venv.
+
+`veman history --all` will print the bash history for all venvs, which can be useful to
+quickly find a command in the history across environments. Currently there is no specific order of the
+venvs in which the history is printed.
+
+
 ## Notes
 
 veman sources `~/.bashrc` in Linux. veman is mainly tested in distributions that are
 derivatives of Debian which automatically sources `/etc/bash.bashrc`.
 
 veman sources `/etc/profile` and `~/.bash_profile` in macOS.
+
+
+## Planned features
+
+- Connect a managed venv with a specific git repository (e.g., automatic cd on activate)
+- User defined commands to run on activate (python and/or shell)
+- Compatibility with zsh & more shells
+- Command to add local paths to .pth-file in venv
+- Configuration file with settings for veman (e.g., path to env directory)
+- Adopt existing unmanaged venvs
+- Auto-update managed venvs after veman has been upgraded
+
 
 ## License
 
