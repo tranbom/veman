@@ -1,0 +1,39 @@
+image: python:3.11-bullseye
+
+stages:
+  - Static Code Analysis
+  - Test
+  - Deploy
+
+flake8:
+  stage: Static Code Analysis
+  image: python:${PYTHON_VERSION}-bullseye
+  allow_failure: true
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.9", "3.10", "3.11"]
+  script:
+    - pip install flake8 genbadge[flake8]
+    - mkdir ./flake8
+    - flake8 veman/ --exit-zero --statistics --tee --output-file ./flake8/flake8stats.txt
+    - genbadge flake8 -i ./flake8/flake8stats.txt -o ./flake8/flake8.svg
+  artifacts:
+    paths:
+      - ./flake8/
+
+pylint:
+  stage: Static Code Analysis
+  image: python:${PYTHON_VERSION}-bullseye
+  allow_failure: true
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.9", "3.10", "3.11"]
+  script:
+    - pip install pylint pylint-exit anybadge
+    - mkdir ./pylint
+    - pylint --output-format=text veman/ | tee ./pylint/pylint.log || pylint-exit $?
+    - PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' ./pylint/pylint.log)
+    - anybadge --label=pylint --file=pylint/pylint.svg --value=$PYLINT_SCORE 8=bright_red 9=yellow 10=green
+  artifacts:
+    paths:
+      - ./pylint/
