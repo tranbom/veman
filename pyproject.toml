@@ -48,4 +48,4 @@ include = ["veman"]
 exclude = ["veman.tests*", "tests*"]
 
 [tool.pylint.main]
-max-branches = 18
+max-branches = 28
