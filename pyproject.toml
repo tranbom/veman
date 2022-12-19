@@ -29,9 +29,8 @@ keywords = [
     "venv", "virtual environment", "utility",
     "developer tools", "virtual environment manager"
 ]
-readme = "README.md"
 
-dynamic = ["version"]
+dynamic = ["readme", "version"]
 
 [project.scripts]
 veman = "veman:main.main"
@@ -41,6 +40,7 @@ veman = "veman:main.main"
 "Repository" = "https://gitlab.com/tranbom/veman"
 
 [tool.setuptools.dynamic]
+readme = {file = ["README.md", "CHANGELOG.md"]}
 version = {attr = "veman.__version__"}
 
 [tool.setuptools.packages.find]
