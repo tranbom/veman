@@ -221,6 +221,10 @@ def check_context(context: types.SimpleNamespace) -> bool:
     if not os.path.isdir(context.env_dir):
         os.makedirs(context.env_dir)
 
+    if context.python_version < (3, 9):
+        print("Python 3.9 or higher required")
+        return False
+
     if context.os not in ('darwin', 'linux'):
         print(f"Support for {systems[context.os]} not yet implemented")
         return False
@@ -257,6 +261,7 @@ def get_context() -> types.SimpleNamespace:
     """
     context = types.SimpleNamespace()
     context.os = sys.platform
+    context.python_version = sys.version_info
     context.shell = os.environ['SHELL']
     context.virtual_env = None
     context.env_dir = ENV_DIR
