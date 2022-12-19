@@ -552,7 +552,6 @@ def main():
 
     parser_activate = subparsers.add_parser('activate', help='activate venv')
     parser_activate.add_argument('venv_name', type=str, nargs='?', help='venv name')
-    parser_activate.add_argument('--last', action='store_true', dest='last')
 
     parser_delete = subparsers.add_parser('delete', help='delete an existing venv')
     parser_delete.add_argument('venv_name', type=str, nargs='?', help='venv name')
