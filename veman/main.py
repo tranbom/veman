@@ -39,19 +39,29 @@ class Veman:
     environment: venv.EnvBuilder
     base_path: str
     overwrite: bool
+    upgrade_deps: bool
+    upgrade_python: bool
 
-    def __init__(self, name: str, context: types.SimpleNamespace):
+    def __init__(
+        self, name: str,
+        context: types.SimpleNamespace,
+        upgrade_deps: bool = False,
+        upgrade_python: bool = False,
+    ):
         self.name = name
         self.context = context
         self.base_path = context.env_dir
+        self.upgrade_deps = upgrade_deps
+        self.upgrade_python = upgrade_python
+
         # These are the default values when running python -m venv, ok to use for now
         self.environment = venv.EnvBuilder(
             clear=False,
             prompt=None,
             symlinks=True,
             system_site_packages=False,
-            upgrade=False,
-            upgrade_deps=False,
+            upgrade=self.upgrade_python,
+            upgrade_deps=self.upgrade_deps,
             with_pip=True
         )
         self.overwrite = False
@@ -190,6 +200,28 @@ class Veman:
         if os.path.isdir(venv_path):
             print(f"Deleting {venv_path}")
             rmtree(venv_path)
+
+    def upgrade(self):
+        """
+        Upgrade core dependencies and/or python version in venv
+        """
+        if not self.upgrade_deps and not self.upgrade_python:
+            print("Neither core dependencies or python version is set to be upgraded")
+            sys.exit(1)
+
+        if self.upgrade_deps:
+            print(
+                "Core dependencies (pip & setuptools) "
+                "will be upgraded if not already latest"
+            )
+
+        if self.upgrade_python:
+            print(
+                "Python will be upgraded to this python "
+                "(the python binary running the script)"
+            )
+
+        self.environment.create(self.base_path + self.name)
 
 
 def activate_venv(env: Veman, context: types.SimpleNamespace):
@@ -400,6 +432,9 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     Parse command given as argument to veman and execute appropriate functions
     """
     venv_name = ''
+    upgrade_deps = False
+    upgrade_python = False
+    upgrade_scripts = False
 
     if options.command == 'create' or (
         options.command == 'history' and not options.all_history
@@ -409,14 +444,36 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     if options.command == 'temp':
         venv_name = get_temp_venv_name(context)
 
-    if options.command in ('activate', 'create', 'delete', 'temp'):
+    if options.command in ('activate', 'create', 'delete', 'temp', 'upgrade'):
         venv_name = (
             venv_name
             or options.venv_name
             or get_venv_name_from_user(options.command, context)
         )
 
-        env = Veman(name=venv_name, context=context)
+        if options.command == 'upgrade':
+            # if no component is specified, all components will be upgraded
+            if not any(
+                [
+                    options.upgrade_deps,
+                    options.upgrade_python,
+                    options.upgrade_scripts,
+                ]
+            ):
+                upgrade_deps = True
+                upgrade_python = True
+                upgrade_scripts = True
+            else:
+                upgrade_deps = options.upgrade_deps
+                upgrade_python = options.upgrade_python
+                upgrade_scripts = options.upgrade_scripts
+
+        env = Veman(
+            name=venv_name,
+            context=context,
+            upgrade_deps=upgrade_deps,
+            upgrade_python=upgrade_python,
+        )
 
     if options.command == 'activate':
         activate_venv(env, context)
@@ -446,6 +503,15 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     elif options.command == 'temp':
         create_venv(env, context, True, True)
         env.delete()
+
+    elif options.command == 'upgrade':
+
+        if upgrade_deps or upgrade_python:
+            env.upgrade()
+
+        if upgrade_scripts:
+            print("Upgrading veman scripts")
+            env.install_scripts()
 
     else:
         print("Invalid command")
@@ -514,6 +580,27 @@ def main():
     parser_temp = subparsers.add_parser(  # noqa: F841
         'temp',
         help='create temporary environment (deleted on deactivation)'
+    )
+
+    parser_upgrade = subparsers.add_parser('upgrade', help='upgrade venv')
+    parser_upgrade.add_argument('venv_name', type=str, nargs='?', help='venv name')
+    parser_upgrade.add_argument(
+        '--deps',
+        action='store_true',
+        dest='upgrade_deps',
+        help='upgrade core dependencies (setuptools and pip)'
+    )
+    parser_upgrade.add_argument(
+        '--python',
+        action='store_true',
+        dest='upgrade_python',
+        help='upgrade python in venv to this python'
+    )
+    parser_upgrade.add_argument(
+        '--scripts',
+        action='store_true',
+        dest='upgrade_scripts',
+        help='upgrade veman scripts to latest version'
     )
 
     options = parser.parse_args()
