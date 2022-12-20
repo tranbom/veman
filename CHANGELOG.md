@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.1.1
+- Minor changes to fix PyPi issue
+- No functional changes to veman in this release
+
+
 ### v0.1.0
 - New command `upgrade` to upgrade core dependencies, python version and veman scripts in venv
 - New option `--verbose` for `history` command
