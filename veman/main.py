@@ -106,7 +106,7 @@ class Veman:
         self.install_scripts()
         self.post_create()
 
-    def shell_history(self) -> List[str]:
+    def shell_history(self, verbose: bool = False) -> List[str]:
         """
         Read shell history from .veman_history for venv and return a list
         with complete history
@@ -123,8 +123,12 @@ class Veman:
 
         history = []
 
-        for line in lines:
+        for index, line in enumerate(lines, start=1):
             line = line.replace('\n', '')
+
+            if verbose:
+                line = f"[{self.name}:{index}] {line}"
+
             history.append(line)
 
         return history
@@ -357,7 +361,8 @@ def get_venv_name_from_user(command: str, context: types.SimpleNamespace) -> str
 
 def venv_shell_history(
     context: types.SimpleNamespace,
-    venv_name: Optional[str] = None
+    venv_name: Optional[str] = None,
+    verbose: bool = False
 ) -> List[str]:
     """
     Read and return shell history for environment with name `venv_name` or
@@ -367,24 +372,25 @@ def venv_shell_history(
 
     if venv_name:
         env = Veman(name=venv_name, context=context)
-        history = env.shell_history()
+        history = env.shell_history(verbose=verbose)
     else:
         for environment in get_environments(context):
             env = Veman(name=environment, context=context)
-            history.extend(env.shell_history())
+            history.extend(env.shell_history(verbose=verbose))
 
     return history
 
 
 def print_venv_shell_history(
     context: types.SimpleNamespace,
-    venv_name: Optional[str] = None
+    venv_name: Optional[str] = None,
+    verbose: bool = False
 ):
     """
     Print shell history for environment with name `venv_name` or combined
     history for all environments if `venv_name` is empty.
     """
-    history = venv_shell_history(context, venv_name)
+    history = venv_shell_history(context, venv_name, verbose)
 
     for entry in history:
         print(entry)
@@ -493,7 +499,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
             print("No venv_name supplied")
 
     elif options.command == 'history':
-        print_venv_shell_history(context, venv_name)
+        print_venv_shell_history(context, venv_name, options.verbose_history)
 
     elif options.command == 'list':
         environments = get_environments(context)
@@ -567,6 +573,13 @@ def main():
         action='store_true',
         dest='all_history',
         help='print shell history for all virtual environments'
+    )
+    parser_history.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        dest='verbose_history',
+        help='include more details when printing shell history'
     )
 
     # pylint: disable=unused-variable
