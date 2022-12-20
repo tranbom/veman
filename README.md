@@ -1,4 +1,9 @@
-# veman
+# veman - Virtual Environment Manager
+
+[![pipeline status](https://gitlab.com/tranbom/veman/badges/main/pipeline.svg)](https://gitlab.com/tranbom/veman/-/pipelines)
+[![PyPi - Release](https://img.shields.io/pypi/v/veman)](https://pypi.org/project/veman/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/veman)](https://pypi.org/project/veman/)
+[![PyPI - License](https://img.shields.io/pypi/l/veman?color=blue)](https://pypi.org/project/veman/)
 
 veman is a lightweight virtual environment manager using venv.
 With veman it is easier to manage multiple environments.
@@ -99,6 +104,27 @@ a venv, making it easy to find which commands have been run in different environ
 `veman history --all` will print the bash history for all venvs, which can be useful to
 quickly find a command in the history across environments. Currently there is no specific order of the
 venvs in which the history is printed.
+
+The `--verbose` option will print some additional details, such as venv name and line number.
+
+
+### Upgrade venv
+
+Various components of a venv can be upgraded with veman.
+Running `veman upgrade <environment-name>` will upgrade the following:
+
+- Core dependencies (pip + setuptools)
+- Python (will be upgraded to the python version running the veman command)
+- veman scripts
+
+It is also possible to select which components to upgrade using any of the following options when running `veman upgrade`:
+
+- `--deps` - Upgrade core dependencies
+- `--python` - Upgrade Python
+- `--scripts` - Upgrade veman scripts
+
+Upgrading the veman scripts can be useful when a new version of veman has been released to ensure compatibility of new
+veman features in a venv created with an older version of veman.
 
 
 ## Notes
