@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.1.0
+- New command `upgrade` to upgrade core dependencies, python version and veman scripts in venv
+- New option `--verbose` for `history` command
+- Check for compatible Python version
+- Documentation now available at https://tranbom.io/veman/
+
+
 ### v0.0.4
 - New argument `-a` or `--activate` for the create command to activate a venv after creation `veman create -a testenv`
 - New command `history` to print the bash history for a venv, or for all venvs with `--all`
