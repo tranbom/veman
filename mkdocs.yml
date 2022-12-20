@@ -1,0 +1,13 @@
+site_name: veman
+site_url: https://tranbom.io/veman/
+repo_url: https://github.com/tranbom/veman
+edit_uri: ""
+
+nav:
+    - Home: index.md
+    - Quickstart: quickstart.md
+    - Commands: commands.md
+    - Releases: releases.md
+
+theme:
+  name: readthedocs
