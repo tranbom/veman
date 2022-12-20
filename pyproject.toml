@@ -36,8 +36,9 @@ dynamic = ["readme", "version"]
 veman = "veman:main.main"
 
 [project.urls]
-"Homepage" = "https://gitlab.com/tranbom/veman"
+"Homepage" = "https://tranbom.io/veman/"
 "Repository" = "https://gitlab.com/tranbom/veman"
+"Documentation" = "https://tranbom.io/veman/"
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md", "CHANGELOG.md"]}
