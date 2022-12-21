@@ -163,7 +163,7 @@ class Veman:
         lines.append(f'source {venv_activate}')
         lines.append('alias deactivate="deactivate && exit"')
         lines.append('')
-        if self.context.os == 'linux':
+        if self.context.os == 'linux' or self.context.os.startswith('freebsd'):
             lines.append(f'export HISTFILE={veman_history}')
             lines.append('')
 
@@ -261,11 +261,11 @@ def check_context(context: types.SimpleNamespace) -> bool:
         print("Python 3.9 or higher required")
         return False
 
-    if context.os not in ('darwin', 'linux'):
+    if context.os not in ('darwin', 'linux') and not context.os.startswith('freebsd'):
         print(f"Support for {systems[context.os]} not yet implemented")
         return False
 
-    if context.shell != '/bin/bash':
+    if not context.shell.endswith('/bash'):
         print(f"Support for {context.shell} not yet implemented")
         return False
 
