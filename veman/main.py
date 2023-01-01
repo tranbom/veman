@@ -215,6 +215,10 @@ class Veman:
         """
         Upgrade core dependencies and/or python version in venv
         """
+        if not self.exists:
+            print(f"Environment {self.name} not found")
+            sys.exit(1)
+
         if not self.upgrade_deps and not self.upgrade_python:
             print("Neither core dependencies or python version is set to be upgraded")
             sys.exit(1)
