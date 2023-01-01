@@ -50,4 +50,6 @@ include = ["veman"]
 exclude = ["veman.tests*", "tests*"]
 
 [tool.pylint.main]
+max-args = 10
+max-attributes = 16
 max-branches = 28
