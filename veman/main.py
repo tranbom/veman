@@ -39,6 +39,7 @@ class Veman:
     environment: venv.EnvBuilder
     base_path: str
     overwrite: bool
+    system_site_packages: bool
     upgrade_deps: bool
     upgrade_python: bool
     with_pip: bool
@@ -46,6 +47,7 @@ class Veman:
     def __init__(
         self, name: str,
         context: types.SimpleNamespace,
+        system_site_packages: bool = False,
         upgrade_deps: bool = False,
         upgrade_python: bool = False,
         with_pip: bool = True,
@@ -53,6 +55,7 @@ class Veman:
         self.name = name
         self.context = context
         self.base_path = context.env_dir
+        self.system_site_packages = system_site_packages
         self.upgrade_deps = upgrade_deps
         self.upgrade_python = upgrade_python
         self.with_pip = with_pip
@@ -62,7 +65,7 @@ class Veman:
             clear=False,
             prompt=None,
             symlinks=True,
-            system_site_packages=False,
+            system_site_packages=self.system_site_packages,
             upgrade=self.upgrade_python,
             upgrade_deps=self.upgrade_deps,
             with_pip=self.with_pip
@@ -482,6 +485,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
             context=context,
             upgrade_deps=upgrade_deps,
             upgrade_python=upgrade_python,
+            system_site_packages=options.sys_site_pkgs,
             with_pip=options.with_pip,
         )
 
@@ -559,7 +563,13 @@ def main():
         default=False,
         dest='overwrite'
     )
-
+    parser_create.add_argument(
+        '--system-site-packages',
+        action='store_true',
+        default=False,
+        dest='sys_site_pkgs',
+        help='enable access to the system site-packages in the virtual environment'
+    )
     parser_create.add_argument(
         '--without-pip',
         action='store_false',
@@ -604,7 +614,13 @@ def main():
         'temp',
         help='create temporary environment (deleted on deactivation)'
     )
-
+    parser_temp.add_argument(
+        '--system-site-packages',
+        action='store_true',
+        default=False,
+        dest='sys_site_pkgs',
+        help='enable access to the system site-packages in the virtual environment'
+    )
     parser_temp.add_argument(
         '--without-pip',
         action='store_false',
@@ -644,6 +660,16 @@ def main():
         # print_usage is more compact and helpful than printing full help
         parser.print_usage()
         sys.exit(1)
+
+    # set with_pip & sys_site_pkgs to default values for commands other
+    # than create & temp, there is probably some cleaner way to do this.
+    # argparse implementation will be reviewed when more planned commands
+    # and flags have been implemented.
+    if not hasattr(options, 'with_pip'):
+        options.with_pip = True
+
+    if not hasattr(options, 'sys_site_pkgs'):
+        options.sys_site_pkgs = False
 
     context = get_context()
 
