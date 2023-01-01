@@ -41,18 +41,21 @@ class Veman:
     overwrite: bool
     upgrade_deps: bool
     upgrade_python: bool
+    with_pip: bool
 
     def __init__(
         self, name: str,
         context: types.SimpleNamespace,
         upgrade_deps: bool = False,
         upgrade_python: bool = False,
+        with_pip: bool = True,
     ):
         self.name = name
         self.context = context
         self.base_path = context.env_dir
         self.upgrade_deps = upgrade_deps
         self.upgrade_python = upgrade_python
+        self.with_pip = with_pip
 
         # These are the default values when running python -m venv, ok to use for now
         self.environment = venv.EnvBuilder(
@@ -62,7 +65,7 @@ class Veman:
             system_site_packages=False,
             upgrade=self.upgrade_python,
             upgrade_deps=self.upgrade_deps,
-            with_pip=True
+            with_pip=self.with_pip
         )
         self.overwrite = False
 
@@ -479,6 +482,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
             context=context,
             upgrade_deps=upgrade_deps,
             upgrade_python=upgrade_python,
+            with_pip=options.with_pip,
         )
 
     if options.command == 'activate':
@@ -556,6 +560,14 @@ def main():
         dest='overwrite'
     )
 
+    parser_create.add_argument(
+        '--without-pip',
+        action='store_false',
+        default=True,
+        dest='with_pip',
+        help='do not install or upgrade pip in the virtual environment'
+    )
+
     parser_activate = subparsers.add_parser('activate', help='activate venv')
     parser_activate.add_argument('venv_name', type=str, nargs='?', help='venv name')
 
@@ -588,10 +600,17 @@ def main():
         help='list virtual environments'
     )
 
-    # pylint: disable=unused-variable
-    parser_temp = subparsers.add_parser(  # noqa: F841
+    parser_temp = subparsers.add_parser(
         'temp',
         help='create temporary environment (deleted on deactivation)'
+    )
+
+    parser_temp.add_argument(
+        '--without-pip',
+        action='store_false',
+        default=True,
+        dest='with_pip',
+        help='do not install pip in the temporary virtual environment'
     )
 
     parser_upgrade = subparsers.add_parser('upgrade', help='upgrade venv')
