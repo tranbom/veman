@@ -85,7 +85,7 @@ class Veman:
         else:
             raise ValueError(f"{self.base_path + self.name} is not a managed venv")
 
-    def create(self, overwrite=False):
+    def create(self, overwrite=False) -> bool:
         """
         Create a new venv
         """
@@ -100,7 +100,7 @@ class Veman:
             )
 
             if not overwrite:
-                return
+                return False
 
             self.delete()
 
@@ -109,6 +109,8 @@ class Veman:
 
         self.install_scripts()
         self.post_create()
+
+        return True
 
     def shell_history(self, verbose: bool = False) -> List[str]:
         """
@@ -288,9 +290,9 @@ def create_venv(
         print(f"Deactivate {context.virtual_env} before creating a new environment")
         sys.exit(1)
 
-    env.create(overwrite=overwrite)
+    created = env.create(overwrite=overwrite)
 
-    if activate and env.exists:
+    if created and activate:
         activate_venv(env, context)
 
 
