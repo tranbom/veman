@@ -34,8 +34,6 @@ class Veman:
     """Virtual environment manager"""
     name: str
     context: types.SimpleNamespace
-    operating_system: str
-    python_version: str
     environment: venv.EnvBuilder
     base_path: str
     overwrite: bool
@@ -256,14 +254,6 @@ def check_context(context: types.SimpleNamespace) -> bool:
     """
     Check current context
     """
-    systems = {
-        'aix': 'AIX',
-        'cygwin': 'Cygwin',
-        'darwin': 'Mac OS',
-        'linux': 'Linux',
-        'win32': 'Windows',
-    }
-
     if not os.path.isdir(context.env_dir):
         os.makedirs(context.env_dir)
 
@@ -272,11 +262,14 @@ def check_context(context: types.SimpleNamespace) -> bool:
         return False
 
     if context.os not in ('darwin', 'linux') and not context.os.startswith('freebsd'):
-        print(f"Support for {systems[context.os]} not yet implemented")
+        print(f"Support for {context.os} not yet implemented")
         return False
 
     if not context.shell.endswith('/bash'):
-        print(f"Support for {context.shell} not yet implemented")
+        if context.shell == 'unknown':
+            print("Could not determine shell")
+        else:
+            print(f"Support for {context.shell} not yet implemented")
         return False
 
     return True
@@ -308,7 +301,7 @@ def get_context() -> types.SimpleNamespace:
     context = types.SimpleNamespace()
     context.os = sys.platform
     context.python_version = sys.version_info
-    context.shell = os.environ['SHELL']
+    context.shell = os.getenv('SHELL', 'unknown')
     context.virtual_env = None
     context.env_dir = ENV_DIR
 
@@ -559,13 +552,14 @@ def main():
         action='store_true',
         default=False,
         dest='activate',
-        help='Activate venv after creation'
+        help='activate venv after creation'
     )
     parser_create.add_argument(
         '--overwrite',
         action='store_true',
         default=False,
-        dest='overwrite'
+        dest='overwrite',
+        help='overwrite venv if venv with the same name already exists'
     )
     parser_create.add_argument(
         '--system-site-packages',
@@ -579,7 +573,7 @@ def main():
         action='store_false',
         default=True,
         dest='with_pip',
-        help='do not install or upgrade pip in the virtual environment'
+        help='do not install pip in the virtual environment'
     )
 
     parser_activate = subparsers.add_parser('activate', help='activate venv')
