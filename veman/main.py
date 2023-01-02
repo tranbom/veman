@@ -37,6 +37,7 @@ class Veman:
     environment: venv.EnvBuilder
     base_path: str
     overwrite: bool
+    prompt: Optional[str]
     system_site_packages: bool
     upgrade_deps: bool
     upgrade_python: bool
@@ -45,6 +46,7 @@ class Veman:
     def __init__(
         self, name: str,
         context: types.SimpleNamespace,
+        prompt: Optional[str] = None,
         system_site_packages: bool = False,
         upgrade_deps: bool = False,
         upgrade_python: bool = False,
@@ -53,6 +55,7 @@ class Veman:
         self.name = name
         self.context = context
         self.base_path = context.env_dir
+        self.prompt = prompt
         self.system_site_packages = system_site_packages
         self.upgrade_deps = upgrade_deps
         self.upgrade_python = upgrade_python
@@ -61,7 +64,7 @@ class Veman:
         # These are the default values when running python -m venv, ok to use for now
         self.environment = venv.EnvBuilder(
             clear=False,
-            prompt=None,
+            prompt=self.prompt,
             symlinks=True,
             system_site_packages=self.system_site_packages,
             upgrade=self.upgrade_python,
@@ -482,9 +485,10 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         env = Veman(
             name=venv_name,
             context=context,
+            prompt=options.prompt,
+            system_site_packages=options.sys_site_pkgs,
             upgrade_deps=upgrade_deps,
             upgrade_python=upgrade_python,
-            system_site_packages=options.sys_site_pkgs,
             with_pip=options.with_pip,
         )
 
@@ -562,6 +566,11 @@ def main():
         default=False,
         dest='overwrite',
         help='overwrite venv if venv with the same name already exists'
+    )
+    parser_create.add_argument(
+        '--prompt',
+        type=str,
+        help='set shell prompt prefix'
     )
     parser_create.add_argument(
         '--system-site-packages',
@@ -661,15 +670,18 @@ def main():
         parser.print_usage()
         sys.exit(1)
 
-    # set with_pip & sys_site_pkgs to default values for commands other
+    # set prompt, with_pip & sys_site_pkgs to default values for commands other
     # than create & temp, there is probably some cleaner way to do this.
     # argparse implementation will be reviewed when more planned commands
     # and flags have been implemented.
-    if not hasattr(options, 'with_pip'):
-        options.with_pip = True
+    if not hasattr(options, 'prompt'):
+        options.prompt = None
 
     if not hasattr(options, 'sys_site_pkgs'):
         options.sys_site_pkgs = False
+
+    if not hasattr(options, 'with_pip'):
+        options.with_pip = True
 
     context = get_context()
 
