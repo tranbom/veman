@@ -1,5 +1,14 @@
 # Releases
 
+### 2023-01-03 - v0.2.0
+- Activated support for FreeBSD with Bash (tested on FreeBSD and GhostBSD)
+- New option `--prompt <prompt-prefix>` for `create` command to set shell prompt prefix
+- New option `--system-site-packages` for `create` command to enable access to system site-packages in venv
+- New option `--without-pip` for `create` command to create venv without installing pip
+- Minor bug fix: Running the `upgrade` command on a non-existing venv would create a new venv
+- Minor bug fix: Running `create -a <venv_name>` with a venv_name that already exists and choosing not to overwrite the existing venv would activate the existing venv
+
+
 ### 2022-12-20 - v0.1.1
 - Minor changes to fix PyPi issue
 - No functional changes to veman in this release

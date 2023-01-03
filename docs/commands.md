@@ -16,6 +16,9 @@ Options:
 
 * `-a, --activate` - Activate upon creation
 * `--overwrite` - Overwrite if venv with same name already exists
+* `--prompt <prompt>` - Set shell prompt prefix for venv (default is venv name)
+* `--system-site-packages` - Enable access to system site-packages
+* `--without-pip` - Do not install pip in the virtual environment
 
 ### veman activate <venv-name\>
 Activate an existing venv. If no <venv-name\> is given, a list of managed envs will be shown and the user
@@ -39,6 +42,11 @@ List all managed environments created by veman
 ### veman temp
 Create and activate a temporary venv. The environment will be deleted after deactivation.
 Multiple temporary environments can be created simultaneously in different terminals.
+
+Options:
+
+* `--system-site-packages` - Enable access to system site-packages
+* `--without-pip` - Do not install pip in the temporary virtual environment
 
 ### veman upgrade <venv-name\>
 Upgrade an existing venv.

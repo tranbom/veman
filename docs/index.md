@@ -9,7 +9,7 @@
 veman is a lightweight virtual environment manager for Python using venv.
 With veman it is easier to manage multiple environments.
 
-Note: veman is under active development and currently supports Bash in Linux & macOS.
+Note: veman is under active development and currently supports Bash in FreeBSD, Linux & macOS.
 
 veman aims to be a simple manager for Python's venv package. The intention of veman is
 to be a comprehensive companion tool for venv, facilitating the creation/activation &
@@ -38,7 +38,8 @@ currently not a prioritised feature.
 ## Requirements
 * Python >= 3.9
 * venv
-* Linux or macOS with Bash
+* Linux, FreeBSD or macOS with Bash
+
 
 ## Terminology
 The words __venv__, __env__, __environment__ & __virtual environment__ are used interchangeably throughout the veman documentation.
