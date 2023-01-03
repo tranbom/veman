@@ -8,7 +8,7 @@
 veman is a lightweight virtual environment manager using venv.
 With veman it is easier to manage multiple environments.
 
-Note: veman is under active development and currently supports Bash in Linux & macOS.
+Note: veman is under active development and currently supports Bash in FreeBSD, Linux & macOS.
 
 veman aims to be a simple manager for Python's venv package. The intention of veman is
 to be a comprehensive companion tool for venv, facilitating the creation/activation &
@@ -18,6 +18,11 @@ Python.
 veman is primarily developed for Linux & macOS. veman does not yet support
 Windows. Windows compatibility will most likely be implemented in a future version but it is
 currently not a prioritised feature.
+
+* GitHub: [https://github.com/tranbom/veman](https://github.com/tranbom/veman)
+* GitLab: [https://gitlab.com/tranbom/veman](https://gitlab.com/tranbom/veman)
+* PyPi: [https://pypi.org/project/veman](https://pypi.org/project/veman)
+* Documentation: [https://tranbom.io/veman/](https://tranbom.io/veman/)
 
 
 ## Installation
@@ -127,9 +132,14 @@ Upgrading the veman scripts can be useful when a new version of veman has been r
 veman features in a venv created with an older version of veman.
 
 
+### Full list of available commands and options
+
+* Documentation: [https://tranbom.io/veman/](https://tranbom.io/veman/)
+
+
 ## Notes
 
-veman sources `~/.bashrc` in Linux. veman is mainly tested in distributions that are
+veman sources `~/.bashrc` in Linux & FreeBSD. veman is mainly tested in distributions that are
 derivatives of Debian which automatically sources `/etc/bash.bashrc`.
 
 veman sources `/etc/profile` and `~/.bash_profile` in macOS.
