@@ -4,8 +4,17 @@ To quickly get started with veman, follow the instructions below.
 For full list of commands, see the [commands](commands.md) section.
 
 ## Installation
-Install from PyPi using pip:  
-`pip install veman`
+Install via pipx:
+`pipx install veman`
+
+Using pipx is the preferred method to install veman.
+
+Installing with pip is not supported when the Python environment is externally managed
+(for example in Debian 12), see PEP-668 for more information.
+
+The default installation directory used by pipx is `~/.local/bin` which needs to be in your PATH.
+Update the PATH manually or run `pipx ensurepath`.
+
 
 ## Usage
 ### Create and activate new venv
