@@ -1,4 +1,4 @@
-image: python:3.11-bullseye
+image: python:3.12-bullseye
 
 stages:
   - Static Code Analysis
@@ -11,7 +11,7 @@ flake8:
   allow_failure: true
   parallel:
     matrix:
-      - PYTHON_VERSION: ["3.9", "3.10", "3.11"]
+      - PYTHON_VERSION: ["3.9", "3.10", "3.11", "3.12"]
   script:
     - pip install flake8 genbadge[flake8]
     - mkdir ./flake8
@@ -27,7 +27,7 @@ pylint:
   allow_failure: true
   parallel:
     matrix:
-      - PYTHON_VERSION: ["3.9", "3.10", "3.11"]
+      - PYTHON_VERSION: ["3.9", "3.10", "3.11", "3.12"]
   script:
     - pip install pylint pylint-exit anybadge
     - mkdir ./pylint
