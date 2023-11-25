@@ -238,6 +238,21 @@ class Veman:
                 "(the python binary running the script)"
             )
 
+            # The venv module will not replace existing symlinks so let's
+            # remove them prior to upgrading the environment
+            python_link = self.base_path + self.name + '/bin/python'
+            python3_link = self.base_path + self.name + '/bin/python3'
+
+            if os.path.islink(python_link):
+                print('Removing symlink', python_link)
+                os.unlink(python_link)
+
+            if os.path.islink(python3_link):
+                print('Removing symlink', python3_link)
+                os.unlink(python3_link)
+
+            print("Upgrading Python")
+
         self.environment.create(self.base_path + self.name)
 
 
