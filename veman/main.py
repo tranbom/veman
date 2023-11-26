@@ -210,7 +210,7 @@ class Veman:
 
         venv_path = self.base_path + self.name
 
-        if os.path.isdir(venv_path):
+        if Path(venv_path).is_dir():
             print(f"Deleting {venv_path}")
             rmtree(venv_path)
 
@@ -240,16 +240,16 @@ class Veman:
 
             # The venv module will not replace existing symlinks so let's
             # remove them prior to upgrading the environment
-            python_link = self.base_path + self.name + '/bin/python'
-            python3_link = self.base_path + self.name + '/bin/python3'
+            python_link = Path(self.base_path + self.name + '/bin/python')
+            python3_link = Path(self.base_path + self.name + '/bin/python3')
 
-            if os.path.islink(python_link):
+            if python_link.is_symlink():
                 print('Removing symlink', python_link)
-                os.unlink(python_link)
+                python_link.unlink(missing_ok=True)
 
-            if os.path.islink(python3_link):
+            if python3_link.is_symlink():
                 print('Removing symlink', python3_link)
-                os.unlink(python3_link)
+                python3_link.unlink(missing_ok=True)
 
             print("Upgrading Python")
 
@@ -274,8 +274,8 @@ def check_context(context: types.SimpleNamespace) -> bool:
     """
     Check current context
     """
-    if not os.path.isdir(context.env_dir):
-        os.makedirs(context.env_dir)
+    if not Path(context.env_dir).is_dir():
+        Path(context.env_dir).mkdir()
 
     if context.python_version < (3, 9):
         print("Python 3.9 or higher required")
@@ -430,7 +430,7 @@ def is_managed_venv(directory: str) -> bool:
     # assume it is managed
     directory_is_managed = (
         is_venv(directory) and
-        os.path.isfile(directory + 'bin/veman_activate')
+        Path(directory + 'bin/veman_activate').is_file()
     )
 
     return directory_is_managed
@@ -446,11 +446,11 @@ def is_venv(directory: str) -> bool:
     # if the directory actually is a directory and
     # contains the following we will assume it is a venv
     directory_is_venv = (
-        os.path.isdir(directory) and
-        os.path.isfile(directory + 'pyvenv.cfg') and
-        os.path.isdir(directory + 'bin') and
-        os.path.isfile(directory + 'bin/python') and
-        os.path.isfile(directory + 'bin/activate')
+        Path(directory).is_dir() and
+        Path(directory + 'pyvenv.cfg').is_file() and
+        Path(directory + 'bin').is_dir() and
+        Path(directory + 'bin/python').is_file() and
+        Path(directory + 'bin/activate').is_file()
     )
 
     return directory_is_venv
