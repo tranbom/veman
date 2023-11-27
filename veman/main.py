@@ -27,7 +27,10 @@ from typing import Optional, List
 
 from veman import __version__
 
-ENV_DIR = str(Path.home().joinpath('.veman', 'env')) + '/'
+DEFAULT_ENV_DIR = str(Path.home().joinpath('.veman', 'env')) + '/'
+VEMAN_ENV_DIR = os.getenv('VEMAN_ENV_DIR')
+
+ENV_DIR = VEMAN_ENV_DIR or DEFAULT_ENV_DIR
 
 
 class Veman:
