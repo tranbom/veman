@@ -553,6 +553,12 @@ def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Virtual Environment Manager')
     parser.add_argument(
+        '--context',
+        action='store_true',
+        dest='context',
+        help='print system environment context (mainly used for debugging & testing)'
+    )
+    parser.add_argument(
         '--version',
         action='store_true',
         dest='version',
@@ -675,6 +681,10 @@ def main():
     )
 
     options = parser.parse_args()
+
+    if options.context:
+        print(get_context())
+        sys.exit(0)
 
     if options.version:
         print(f"veman {__version__}")
