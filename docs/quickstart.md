@@ -15,6 +15,11 @@ Installing with pip is not supported when the Python environment is externally m
 The default installation directory used by pipx is `~/.local/bin` which needs to be in your PATH.
 Update the PATH manually or run `pipx ensurepath`.
 
+### Dependencies
+
+- Python >=3.9
+- venv
+
 ### Installation instructions for Debian 12 and distributions based on Debian 12
 
 Install pip, pipx & venv from the Debian repository:  
