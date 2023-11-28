@@ -317,6 +317,16 @@ def create_venv(
         activate_venv(env, context)
 
 
+def delete_venv(
+    env: Veman
+) -> None:
+    """ Delete virtual environment """
+    if env.name:
+        env.delete()
+    else:
+        print("No venv_name supplied")
+
+
 def get_context() -> types.SimpleNamespace:
     """
     Return context
@@ -522,10 +532,7 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         )
 
     elif options.command == 'delete':
-        if env.name:
-            env.delete()
-        else:
-            print("No venv_name supplied")
+        delete_venv(env)
 
     elif options.command == 'history':
         print_venv_shell_history(context, venv_name, options.verbose_history)
