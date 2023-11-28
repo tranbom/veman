@@ -149,6 +149,10 @@ It is also possible to select which components to upgrade using any of the follo
 Upgrading the veman scripts can be useful when a new version of veman has been released to ensure compatibility of new
 veman features in a venv created with an older version of veman.
 
+All managed venvs can be upgraded with the option `--all`:
+
+`veman upgrade --all`
+
 
 ### Full list of available commands and options
 
