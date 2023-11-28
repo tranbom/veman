@@ -477,6 +477,10 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
     upgrade_deps = False
     upgrade_python = False
     upgrade_scripts = False
+    try:
+        upgrade_all_venvs = options.upgrade_all_venvs
+    except AttributeError:
+        upgrade_all_venvs = False
 
     if options.command == 'create' or (
         options.command == 'history' and not options.all_history
@@ -487,11 +491,13 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         venv_name = get_temp_venv_name(context)
 
     if options.command in ('activate', 'create', 'delete', 'temp', 'upgrade'):
-        venv_name = (
-            venv_name
-            or options.venv_name
-            or get_venv_name_from_user(options.command, context)
-        )
+        # upgrade_all_venvs only relevant for command upgrade
+        if not upgrade_all_venvs:
+            venv_name = (
+                venv_name
+                or options.venv_name
+                or get_venv_name_from_user(options.command, context)
+            )
 
         if options.command == 'upgrade':
             # if no component is specified, all components will be upgraded
@@ -547,16 +553,64 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
         env.delete()
 
     elif options.command == 'upgrade':
-
-        if upgrade_deps or upgrade_python:
-            env.upgrade()
-
-        if upgrade_scripts:
-            print("Upgrading veman scripts")
-            env.install_scripts()
+        if upgrade_all_venvs:
+            del env
+            upgrade_venvs(
+                context,
+                options,
+                upgrade_deps,
+                upgrade_python,
+                upgrade_scripts
+            )
+        else:
+            upgrade_venv(env, upgrade_deps, upgrade_python, upgrade_scripts)
 
     else:
         print("Invalid command")
+
+
+def upgrade_venv(
+    environment: Veman,
+    upgrade_deps: bool,
+    upgrade_python: bool,
+    upgrade_scripts: bool
+) -> None:
+    """ Upgrade single venv `environment` """
+    if upgrade_deps or upgrade_python:
+        environment.upgrade()
+
+    if upgrade_scripts:
+        print("Upgrading veman scripts")
+        environment.install_scripts()
+
+
+def upgrade_venvs(
+    context: types.SimpleNamespace,
+    options: types.SimpleNamespace,
+    upgrade_deps: bool,
+    upgrade_python: bool,
+    upgrade_scripts: bool
+) -> None:
+    """ Upgrade all managed venvs """
+    print("Upgrading all environments")
+    print()
+
+    environments = get_environments(context)
+    for managed_env in environments:
+        env = Veman(
+            name=managed_env,
+            context=context,
+            prompt=options.prompt,
+            system_site_packages=options.sys_site_pkgs,
+            upgrade_deps=upgrade_deps,
+            upgrade_python=upgrade_python,
+            with_pip=options.with_pip,
+        )
+
+        print(f"Upgrading {managed_env}")
+        upgrade_venv(env, upgrade_deps, upgrade_python, upgrade_scripts)
+        del env
+        print()
 
 
 def main():
@@ -671,6 +725,13 @@ def main():
 
     parser_upgrade = subparsers.add_parser('upgrade', help='upgrade venv')
     parser_upgrade.add_argument('venv_name', type=str, nargs='?', help='venv name')
+    parser_upgrade.add_argument(
+        '--all',
+        '-a',
+        action='store_true',
+        dest='upgrade_all_venvs',
+        help='upgrade all venvs managed by veman'
+    )
     parser_upgrade.add_argument(
         '--deps',
         action='store_true',
