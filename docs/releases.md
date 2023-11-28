@@ -1,5 +1,12 @@
 # Releases
 
+### 2023-11-28 - v0.3.0
+- veman now reads the environment variable `VEMAN_ENV_DIR` which can be used to override which directory is used for managed environments.
+- The symlinks `python` and `python3` in an environments bin folder were not replaced by default by the venv module when upgrading a venv, veman now delete the symlinks to ensure that new symlinks are created during an upgrade.
+- New option `--all` to the command `veman upgrade` to upgrade all existing venvs. The `--all` option can be used with or without existing options to the upgrade command.
+- New option `--context` to print system environment context (mainly used for debugging & testing).
+
+
 ### 2023-01-03 - v0.2.0
 - Activated support for FreeBSD with Bash (tested on FreeBSD and GhostBSD)
 - New option `--prompt <prompt-prefix>` for `create` command to set shell prompt prefix

@@ -8,6 +8,12 @@
 * `veman temp` - Create and activate a temporary environment (deleted on deactivation)
 * `veman upgrade` - Upgrade venv
 
+### veman
+Options:
+
+* `--help` - Show brief help message
+* `--context` - Print system environment context (mainly used for debugging & testing)
+* `--version` - Print veman version
 
 ### veman create <venv-name\>
 Create a new venv. If no <venv-name\> is given, user will be prompted for a name.
@@ -60,6 +66,7 @@ It is also possible to select which components to upgrade using any of the optio
 
 Options:
 
+* `-a, --all` - Upgrade all venvs managed by veman
 * `--deps` - Upgrade core dependencies (pip + setuptools)
 * `--python` - Upgrade Python to the python version running the veman command
 * `--scripts` - Upgrade veman scripts to the latest version

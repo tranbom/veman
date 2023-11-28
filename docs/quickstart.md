@@ -57,4 +57,13 @@ Create and activate a venv named "djangoenv":
 ### Print bash history for venv
 `veman history djangoenv`
 
+### Using VEMAN_ENV_DIR
+The environment variable `VEMAN_ENV_DIR` can be used to override the default directory veman uses for venvs.
+No venvs will be moved when changing `VEMAN_ENV_DIR`. It is possible to use different directories to maintain different sets of venvs by modifying the environment variable when running veman.
 
+Example:  
+`veman create appdev` - Create a managed environment which will be stored at the default location  
+`VEMAN_ENV_DIR=/home/user/custom/location/environments veman create djangoenv57` - Create a managed environment at a custom location  
+`VEMAN_ENV_DIR=/home/user/custom_location/environments veman activate djangoenv57` - Activate a managed environment stored in a custom location  
+
+Please note that in a future version of veman the default directory will be configurable in a configuration file.
