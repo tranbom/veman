@@ -289,7 +289,11 @@ def check_context(context: types.SimpleNamespace) -> bool:
         context.env_dir = context.env_dir + '/'
 
     if not Path(context.env_dir).is_dir():
-        Path(context.env_dir).mkdir()
+        try:
+            Path(context.env_dir).mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            print(f"Permission denied when trying to create {context.env_dir}")
+            return False
 
     if context.python_version < (3, 9):
         print("Python 3.9 or higher required")
