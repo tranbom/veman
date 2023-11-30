@@ -277,6 +277,17 @@ def check_context(context: types.SimpleNamespace) -> bool:
     """
     Check current context
     """
+    if not os.path.isabs(context.env_dir):
+        print(
+            f"'{context.env_dir}'",
+            "does not look like a valid path. "
+            "Make sure VEMAN_ENV_DIR is set to a valid absolute path."
+        )
+        return False
+
+    if not context.env_dir[-1] == '/':
+        context.env_dir = context.env_dir + '/'
+
     if not Path(context.env_dir).is_dir():
         Path(context.env_dir).mkdir()
 
