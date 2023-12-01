@@ -44,6 +44,8 @@ class Veman:
     system_site_packages: bool
     upgrade_deps: bool
     upgrade_python: bool
+    veman_activate: str
+    veman_history: str
     with_pip: bool
 
     def __init__(
@@ -75,6 +77,8 @@ class Veman:
             with_pip=self.with_pip
         )
         self.overwrite = False
+        self.veman_activate = self.base_path + self.name + '/bin/veman_activate'
+        self.veman_history = self.base_path + self.name + '/.veman_history'
 
     def activate(self):
         """
@@ -82,10 +86,8 @@ class Veman:
         """
         if self.exists:
             # is_managed_venv (called as part of self.exists) contains
-            # a check to verify the existence of veman_activate
-            veman_activate = self.base_path + self.name + '/bin/veman_activate'
-
-            subprocess.run(['bash', '--rcfile', veman_activate], check=True)
+            # a check to verify the existence of self.veman_activate
+            subprocess.run(['bash', '--rcfile', self.veman_activate], check=True)
 
             self.on_deactivate()
         else:
@@ -123,15 +125,13 @@ class Veman:
         Read shell history from .veman_history for venv and return a list
         with complete history
         """
-        veman_history = self.base_path + self.name + '/.veman_history'
-
         try:
-            with open(veman_history, 'r', encoding='UTF-8') as file:
+            with open(self.veman_history, 'r', encoding='UTF-8') as file:
                 lines = file.readlines()
         except FileNotFoundError:
             return []
         except IOError:
-            print(f"Error reading {veman_history}")
+            print(f"Error reading {self.veman_history}")
 
         history = []
 
@@ -159,8 +159,6 @@ class Veman:
             home_rc = str(Path.home()) + '/.bashrc'
 
         venv_activate = self.base_path + self.name + '/bin/activate'
-        veman_activate = self.base_path + self.name + '/bin/veman_activate'
-        veman_history = self.base_path + self.name + '/.veman_history'
 
         lines = []
 
@@ -168,7 +166,7 @@ class Veman:
         lines.append('')
         if self.context.os == 'darwin':
             lines.append('export SHELL_SESSION_HISTORY=0')
-            lines.append(f'export HISTFILE={veman_history}')
+            lines.append(f'export HISTFILE={self.veman_history}')
             lines.append(f'source {etc_profile}')
             lines.append('')
         lines.append(f'[ -r {home_rc} ] && source {home_rc}')
@@ -176,11 +174,11 @@ class Veman:
         lines.append('alias deactivate="deactivate && exit"')
         lines.append('')
         if self.context.os == 'linux' or self.context.os.startswith('freebsd'):
-            lines.append(f'export HISTFILE={veman_history}')
+            lines.append(f'export HISTFILE={self.veman_history}')
             lines.append('')
 
         try:
-            with open(veman_activate, 'w', encoding='UTF-8') as file:
+            with open(self.veman_activate, 'w', encoding='UTF-8') as file:
                 for line in lines:
                     file.write(f'{line}\n')
         except IOError:
