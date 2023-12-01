@@ -149,37 +149,11 @@ class Veman:
         """
         Install scripts into a created environment
         """
-        # Generating the veman_activate script inline is fine for now
-        etc_profile = ''
-
-        if self.context.os == 'darwin':
-            etc_profile = '/etc/profile'
-            home_rc = str(Path.home()) + '/.bash_profile'
-        else:
-            home_rc = str(Path.home()) + '/.bashrc'
-
-        venv_activate = self.base_path + self.name + '/bin/activate'
-
-        lines = []
-
-        lines.append('#!/bin/bash')
-        lines.append('')
-        if self.context.os == 'darwin':
-            lines.append('export SHELL_SESSION_HISTORY=0')
-            lines.append(f'export HISTFILE={self.veman_history}')
-            lines.append(f'source {etc_profile}')
-            lines.append('')
-        lines.append(f'[ -r {home_rc} ] && source {home_rc}')
-        lines.append(f'source {venv_activate}')
-        lines.append('alias deactivate="deactivate && exit"')
-        lines.append('')
-        if self.context.os == 'linux' or self.context.os.startswith('freebsd'):
-            lines.append(f'export HISTFILE={self.veman_history}')
-            lines.append('')
+        script = generate_veman_activate_script(self)
 
         try:
             with open(self.veman_activate, 'w', encoding='UTF-8') as file:
-                for line in lines:
+                for line in script:
                     file.write(f'{line}\n')
         except IOError:
             print("Error writing veman_activate script to venv")
@@ -338,6 +312,39 @@ def delete_venv(
         env.delete()
     else:
         print("No venv_name supplied")
+
+
+def generate_veman_activate_script(env: Veman) -> List[str]:
+    """ Generate the veman_activate script for `env`"""
+    # Generating the veman_activate script inline is fine for now
+    etc_profile = ''
+
+    if env.context.os == 'darwin':
+        etc_profile = '/etc/profile'
+        home_rc = str(Path.home()) + '/.bash_profile'
+    else:
+        home_rc = str(Path.home()) + '/.bashrc'
+
+    venv_activate = env.base_path + env.name + '/bin/activate'
+
+    lines = []
+
+    lines.append('#!/bin/bash')
+    lines.append('')
+    if env.context.os == 'darwin':
+        lines.append('export SHELL_SESSION_HISTORY=0')
+        lines.append(f'export HISTFILE={env.veman_history}')
+        lines.append(f'source {etc_profile}')
+        lines.append('')
+    lines.append(f'[ -r {home_rc} ] && source {home_rc}')
+    lines.append(f'source {venv_activate}')
+    lines.append('alias deactivate="deactivate && exit"')
+    lines.append('')
+    if env.context.os == 'linux' or env.context.os.startswith('freebsd'):
+        lines.append(f'export HISTFILE={env.veman_history}')
+        lines.append('')
+
+    return lines
 
 
 def get_context() -> types.SimpleNamespace:
