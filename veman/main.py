@@ -230,6 +230,11 @@ class Veman:
 
         self.environment.create(self.base_path + self.name)
 
+    @property
+    def veman_activate_script_version(self):
+        """ Return version of the veman_activate script """
+        return read_veman_activate_script_version(self.veman_activate)
+
 
 def activate_venv(env: Veman, context: types.SimpleNamespace):
     """
@@ -587,6 +592,33 @@ def parse_command(context: types.SimpleNamespace, options: types.SimpleNamespace
 
     else:
         print("Invalid command")
+
+
+def read_veman_activate_script_version(script_path: str) -> str | None:
+    """ Read version of veman_activate script from `script_path` """
+    try:
+        with open(script_path, 'r', encoding='UTF-8') as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        print(f"Could not find file {script_path}")
+        return None
+    except IOError:
+        print(f"Error reading {script_path}")
+        return None
+
+    # script_version was not present in the first releases of veman
+    if lines[1] == '\n':
+        return '0.1'
+
+    try:
+        version = lines[1].split('=')[1].strip()
+    except IndexError:
+        version = None
+        print(
+            f"Could not determine version for the veman_activate script: {script_path}"
+        )
+
+    return version or None
 
 
 def upgrade_venv(
