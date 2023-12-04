@@ -322,6 +322,7 @@ def delete_venv(
 def generate_veman_activate_script(env: Veman) -> List[str]:
     """ Generate the veman_activate script for `env`"""
     # Generating the veman_activate script inline is fine for now
+    script_version = '0.2'
     etc_profile = ''
 
     if env.context.os == 'darwin':
@@ -335,6 +336,7 @@ def generate_veman_activate_script(env: Veman) -> List[str]:
     lines = []
 
     lines.append('#!/bin/bash')
+    lines.append(f'# script_version = {script_version}')
     lines.append('')
     if env.context.os == 'darwin':
         lines.append('export SHELL_SESSION_HISTORY=0')
